@@ -13,14 +13,14 @@ struct PackageBuildInfoPlugin: BuildToolPlugin {
             print("Target is \(String(describing: target.self))")
             return []
         }
-        let outputFile = context.pluginWorkDirectoryURL.path(percentEncoded: false).appending("packageBuildInfo.swift")
+        let outputFileURL = context.pluginWorkDirectoryURL.appending(path: "packageBuildInfo.swift")
 
         let command: Command = .prebuildCommand(
             displayName:
-                "Generating \(outputFile.lastPathComponent) for \(target.directoryURL)",
+                "Generating \(outputFileURL.lastPathComponent) for \(target.directoryURL)",
             executable:
                 try context.tool(named: "PackageBuildInfo").url,
-            arguments: [ "\(target.directoryURL.path(percentEncoded: false))", "\(outputFile)" ],
+            arguments: [ "\(target.directoryURL.path(percentEncoded: false))", "\(outputFileURL.path(percentEncoded: false))" ],
             outputFilesDirectory: context.pluginWorkDirectoryURL
         )
         return [command]
@@ -31,16 +31,17 @@ struct PackageBuildInfoPlugin: BuildToolPlugin {
 import XcodeProjectPlugin
 extension PackageBuildInfoPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodeProjectPlugin.XcodePluginContext, target: XcodeProjectPlugin.XcodeTarget) throws -> [PackagePlugin.Command] {
-        let outputFile = context.pluginWorkDirectory.appending("packageBuildInfo.swift")
+        let outputFileURL = context.pluginWorkDirectoryURL.appending(path: "packageBuildInfo.swift")
         let command: Command = .prebuildCommand(
             displayName:
-                "Generating \(outputFile.lastComponent) for \(context.xcodeProject.directory)",
+                "Generating \(outputFileURL.lastPathComponent) for \(context.xcodeProject.directoryURL)",
             executable:
-                try context.tool(named: "PackageBuildInfo").path,
-            arguments: [ "\(context.xcodeProject.directory)", "\(outputFile)" ],
-            outputFilesDirectory: context.pluginWorkDirectory
+                try context.tool(named: "PackageBuildInfo").url,
+            arguments: [ "\(context.xcodeProject.directoryURL.path(percentEncoded: false))", "\(outputFileURL.path(percentEncoded: false))" ],
+            outputFilesDirectory: context.pluginWorkDirectoryURL
         )
         return [command]
     }
 }
 #endif
+
