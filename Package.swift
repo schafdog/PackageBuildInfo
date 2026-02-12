@@ -10,12 +10,12 @@ let package = Package(
         .plugin(
             name: "PackageBuildInfoPlugin",
             capability: .command(
-                 intent: .sourceCodeFormatting(),
-                 permissions: [
-                     .writeToPackageDirectory(reason: "Generates git version info")
-                 ]
+	      intent: .custom(verb: "generate-version", description: "Generates git version info")
+//	      intent: .sourceCodeFormatting(),
+//                 permissions: [
+//                     .writeToPackageDirectory(reason: "Generates git version info")
+//                 ]
             ),
-
             dependencies: ["PackageBuildInfo"]
         ),
         .binaryTarget(name: "PackageBuildInfo", path: "Binaries/PackageBuildInfo.artifactbundle"),
